@@ -1,0 +1,93 @@
+# AL5D Robot Arm Configuration
+# Adjust these values based on your specific hardware setup
+
+# Serial Communication
+serial_port: "/dev/ttyUSB0"
+baud_rate: 9600
+
+# Publishing rates
+joint_state_publish_rate: 10.0
+
+# Joint limits (in degrees)
+joint_limits:
+  base_joint:
+    min_position: -90.0
+    max_position: 90.0
+    max_velocity: 180.0
+  
+  shoulder_joint:
+    min_position: -90.0
+    max_position: 90.0
+    max_velocity: 180.0
+  
+  elbow_joint:
+    min_position: -90.0
+    max_position: 90.0
+    max_velocity: 180.0
+  
+  wrist_joint:
+    min_position: -90.0
+    max_position: 90.0
+    max_velocity: 180.0
+  
+  wrist_rotate_joint:
+    min_position: -180.0
+    max_position: 180.0
+    max_velocity: 180.0
+  
+  gripper_joint:
+    min_position: 0.0
+    max_position: 180.0
+    max_velocity: 180.0
+
+# Servo calibration (pulse width values)
+# Adjust these values for your specific servos
+servo_calibration:
+  servo_0:  # Base
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: -90.0
+    max_angle: 90.0
+    
+  servo_1:  # Shoulder
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: -90.0
+    max_angle: 90.0
+    
+  servo_2:  # Elbow
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: -90.0
+    max_angle: 90.0
+    
+  servo_3:  # Wrist
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: -90.0
+    max_angle: 90.0
+    
+  servo_4:  # Wrist Rotate
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: -180.0
+    max_angle: 180.0
+    
+  servo_5:  # Gripper
+    min_pulse: 500
+    max_pulse: 2500
+    min_angle: 0.0
+    max_angle: 180.0
+
+# Default movement speeds
+default_speeds:
+  joint_movement: 512
+  cartesian_movement: 512
+  gripper_movement: 256
+  homing_speed: 256
+
+# Safety settings
+safety:
+  enable_joint_limits: true
+  enable_collision_detection: false
+  emergency_stop_enabled: true
