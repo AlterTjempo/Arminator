@@ -49,7 +49,8 @@
 				"ms-python.python",
 				"ms-vscode.cpptools",
 				"nonanonno.vscode-ros2",
-				"twxs.cmake"
+				"twxs.cmake",
+				"yzhang.markdown-all-in-one"
 			]
 		}
 	},
