@@ -11,7 +11,20 @@ public:
     SerialDriver(const std::string &port = "/dev/ttyACM0", int baudrate = 9600);
     ~SerialDriver();
 
-    int writeLine(const std::string &line);
+    struct SerialError
+    {
+        enum Code : int32_t
+        {
+            NONE = 0,
+            PORT_NOT_OPEN = -1,
+            UNKNOWN_ERROR = -99
+        };
+        Code code;
+        std::string message;
+    };
+
+    SerialError writeLine(const std::string &line);
+    SerialError setBaudrate(int _baudrate);
 
 private:
     boost::asio::io_context io;      // use io_context instead of io_service
