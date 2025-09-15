@@ -24,12 +24,13 @@ public:
     };
 
     SerialError writeLine(const std::string &line);
-    SerialError setBaudrate(int _baudrate);
+    SerialError setBaudrate(uint32_t baudrate);
+    uint32_t getBaudrate() const { return baudrate_; }
 
 private:
-    boost::asio::io_context io;      // use io_context instead of io_service
-    boost::asio::serial_port serial; // must be initialized with io_context
+    boost::asio::io_context io_;      // use io_context instead of io_service
+    boost::asio::serial_port serial_; // must be initialized with io_context
 
-    std::string port_name;
-    int baudrate;
+    std::string port_name_;
+    uint32_t baudrate_;
 };
