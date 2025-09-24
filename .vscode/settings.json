@@ -76,5 +76,6 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/home/ubuntu/Arminator/low_level_driver"
 }

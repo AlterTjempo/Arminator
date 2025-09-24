@@ -1,6 +1,6 @@
 #pragma once
 
-#include "robot_arm_driver/SerialDriver.hpp"
+#include "SerialDriver.hpp"
 #include <string>
 #include <optional>
 
