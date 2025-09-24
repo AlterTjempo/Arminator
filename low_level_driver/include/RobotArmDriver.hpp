@@ -35,6 +35,7 @@ public:
     RobotArmDriverError sendSingleServoCommand(const ServoCommand &command);
     RobotArmDriverError sendMultiServoCommand(const MultiServoCommand &commands);
     void queryMovementStatus();
+    void queryPulseWidth(uint8_t channel); // is het een channel of iets anders?s
     void stopServo(uint8_t channel);
     void stopAllServos();
 
