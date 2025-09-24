@@ -41,6 +41,27 @@ SerialDriver::SerialError SerialDriver::writeLine(const std::string &line)
     return {SerialError::NONE, "Line written successfully."};
 }
 
+SerialDriver::SerialError SerialDriver::readLine(std::string &line)
+{
+    if (!serial_.is_open())
+    {
+        std::cerr << "Serial port is not open." << std::endl;
+        return {SerialError::PORT_NOT_OPEN, "Serial port is not open."};
+    }
+
+    boost::asio::streambuf buf;
+    boost::asio::read_until(serial_, buf, "\r");
+    std::istream is(&buf);
+    std::getline(is, line);
+    // Remove carriage return character if present
+    if (!line.empty() && line.back() == '\r')
+    {
+        line.pop_back();
+    }
+    std::cout << "Received line: " << line << std::endl;
+    return {SerialError::NONE, "Line read successfully."};
+}
+
 SerialDriver::SerialError SerialDriver::setBaudrate(uint32_t baudrate)
 {
     if (!serial_.is_open())

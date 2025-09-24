@@ -24,6 +24,7 @@ public:
     };
 
     SerialError writeLine(const std::string &line);
+    SerialError readLine(std::string &line);
     SerialError setBaudrate(uint32_t baudrate);
     uint32_t getBaudrate() const { return baudrate_; }
 
