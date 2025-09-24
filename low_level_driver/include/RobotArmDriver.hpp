@@ -34,6 +34,10 @@ public:
 
     RobotArmDriverError sendSingleServoCommand(const ServoCommand &command);
     RobotArmDriverError sendMultiServoCommand(const MultiServoCommand &commands);
+    void queryMovementStatus();
+    void stopServo(uint8_t channel);
+    void stopAllServos();
+
 
 private:
     std::string toSerialString(const ServoCommand &command);
