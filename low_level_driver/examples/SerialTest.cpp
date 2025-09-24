@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 
 #include "RobotArmDriver.hpp"
+#include <thread>
 
 // Arguments: port, baudrate, pulsewidth, time_ms (optional)
 #define MIN_NUMBER_OF_ARGUMENTS 5
@@ -46,5 +47,7 @@ int main(int argc, char const *argv[])
 		std::cerr << "Error sending command: " << error.message << '\n';
 		status = -1;
 	}
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	driver.stopAllServos();
 	return status;
 }

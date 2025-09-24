@@ -49,6 +49,19 @@ RobotArmDriver::RobotArmDriverError RobotArmDriver::sendMultiServoCommand(const 
     return {RobotArmDriverError::NONE, ""};
 }
 
+void RobotArmDriver::stopServo(uint8_t channel)
+{
+    serial_driver_.writeLine("STOP" + std::to_string(channel));
+}
+
+void RobotArmDriver::stopAllServos()
+{
+    for (uint8_t channel = 0; channel < 6; ++channel) 
+    {
+        stopServo(channel);
+    }
+}
+
 std::string RobotArmDriver::toSerialString(const ServoCommand &command)
 {
     std::string cmd = "#" + std::to_string(command.channel) + "P" + std::to_string(command.pulseWidth);
