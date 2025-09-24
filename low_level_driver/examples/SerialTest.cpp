@@ -40,7 +40,6 @@ int main(int argc, char const *argv[])
 	command.channel = channel;
 	command.pulseWidth = pulsewidth;
 
-	// std::cout << command.time.value() << std::endl;
 	auto error = driver.sendSingleServoCommand(command);
 	if (error.code != RobotArmDriver::RobotArmDriverError::NONE)
 	{
