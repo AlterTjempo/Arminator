@@ -1,7 +1,7 @@
 FROM osrf/ros:jazzy-desktop-full-noble
 
 
-RUN usermod -aG video ubuntu
+RUN usermod -aG dialout,tty,video ubuntu
 RUN usermod -aG irc ubuntu
 
 USER ubuntu
@@ -13,3 +13,5 @@ RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> 
 RUN echo "export _colcon_cd_root=/opt/ros/jazzy/" >> ~/.bashrc
 
 SHELL [ "/bin/bash" , "-c" ]
+
+

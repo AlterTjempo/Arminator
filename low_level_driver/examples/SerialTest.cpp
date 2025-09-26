@@ -46,7 +46,10 @@ int main(int argc, char const *argv[])
 		std::cerr << "Error sending command: " << error.message << '\n';
 		status = -1;
 	}
-	std::this_thread::sleep_for(std::chrono::seconds(2));
-	driver.stopAllServos();
+	// std::this_thread::sleep_for(std::chrono::seconds(2));
+	// driver.queryMovementStatus();
+	// driver.queryPulseWidth(channel);	
+
+	// driver.stopAllServos();
 	return status;
 }

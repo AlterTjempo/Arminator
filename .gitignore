@@ -20,3 +20,4 @@ CMakeUserPresets.json
 
 low_level_driver/build/*
 high_level_driver/build/*
+docs/resources/RobotArm.asta.lock
