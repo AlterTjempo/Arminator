@@ -74,12 +74,8 @@ void RobotArmDriver::queryMovementStatus() {
         return;
     }
 
-    // Sleep for a longer duration to allow the device to respond
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));  
-
     // Print out the response from the serial port
     std::string response;
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));  
     error = serial_driver_.readLine(response);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error reading response: " << error.message << std::endl;
