@@ -18,6 +18,17 @@ CMakeUserPresets.json
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #cmake-build-*
 
+
+# Ignore build directories
 low_level_driver/build/*
 high_level_driver/build/*
+install/*
+log/*
+
+build/arminator_driver/*
+build/robot_arm_driver/*
+
+
+
+# Ignore astah files
 docs/resources/RobotArm.asta.lock
