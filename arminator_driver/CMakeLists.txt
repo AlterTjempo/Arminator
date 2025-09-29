@@ -11,7 +11,27 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(robot_arm_driver REQUIRED)
+find_package(Boost REQUIRED)
+
+# add an executable that uses the robot arm driver
+add_executable(arminator_driver 
+  src/main.cpp
+  ../low_level_driver/src/SerialDriver.cpp
+  ../low_level_driver/src/RobotArmDriver.cpp
+)
+
+target_include_directories(arminator_driver PRIVATE
+  ../low_level_driver/include
+  ../low_level_driver/src
+)
+
+target_link_libraries(arminator_driver PRIVATE Boost::boost)
+
+# install the executable
+install(TARGETS arminator_driver
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
