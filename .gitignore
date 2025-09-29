@@ -22,8 +22,8 @@ CMakeUserPresets.json
 # Ignore build directories
 low_level_driver/build/*
 high_level_driver/build/*
-install/*
-log/*
+install
+log
 
 build/arminator_driver/*
 build/robot_arm_driver/*
