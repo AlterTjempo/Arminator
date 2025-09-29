@@ -14,6 +14,17 @@ find_package(ament_cmake REQUIRED)
 find_package(Boost REQUIRED)
 find_package(robot_arm_driver REQUIRED)
 
+# SRV generation
+
+find_package(rosidl_default_generators REQUIRED)
+
+# Generate messages and services
+rosidl_generate_interfaces(ArmSRV
+  "srv/MoveServo.srv"
+  "srv/SetPosition.srv"
+  "srv/Estop.srv"
+)
+
 # add an executable that uses the robot arm driver
 add_executable(arminator_driver 
   src/main.cpp
@@ -24,12 +35,17 @@ add_executable(arminator_driver
 #   ../low_level_driver/src
 # )
 
-target_link_libraries(arminator_driver PRIVATE Boost::boost robot_arm_driver::robot_arm_driver)
 
 # install the executable
 install(TARGETS arminator_driver
   DESTINATION lib/${PROJECT_NAME}
 )
+
+#Link something? 
+
+rosidl_get_typesupport_target(cpp_typesupport_target ArmSRV "rosidl_typesupport_cpp")
+# target_link_libraries(arminator_driver ${cpp_typesupport_target})
+target_link_libraries(arminator_driver PRIVATE Boost::boost robot_arm_driver::robot_arm_driver ${cpp_typesupport_target})
 
 
 if(BUILD_TESTING)
@@ -44,4 +60,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_dependencies(rosidl_default_runtime)
 ament_package()

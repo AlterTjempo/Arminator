@@ -1,0 +1,5 @@
+int16 servo
+int16 angle
+int16 time 0 # optional, time in ms, 0 means as fast as possible.
+---
+int8 status
