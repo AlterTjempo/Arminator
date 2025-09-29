@@ -3,7 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/install/**"
+                "${workspaceFolder}/install/**",
+                "${workspaceFolder}/install/arminator_driver/include/**",
+                "${workspaceFolder}/install/robot_arm_driver/include/**",
+                "/opt/ros/jazzy/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
