@@ -35,7 +35,7 @@ target_include_directories(robot_arm_driver
 )
 
 # add boost and threads libraries to the robot arm driver
-target_link_libraries(robot_arm_driver PUBLIC Threads::Threads Boost::boost)
+target_link_libraries(robot_arm_driver PUBLIC Boost::boost)
 
 # installation rules
 include(GNUInstallDirs)
