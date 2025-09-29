@@ -25,6 +25,11 @@ public:
 
     SerialError writeLine(const std::string &line);
     SerialError readLine(std::string &line);
+
+    /// @brief Requests the pulse width for a specific channel from the device
+    /// @param line channel of which the pulse width is requested
+    /// @return A pulse width as a number between 50 and 250 (actual = pulsewidth / 1000)
+    SerialDriver::SerialError readLine(std::vector<uint8_t> &line);
     SerialError setBaudrate(uint32_t baudrate);
     uint32_t getBaudrate() const { return baudrate_; }
 

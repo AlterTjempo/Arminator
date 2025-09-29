@@ -47,8 +47,8 @@ int main(int argc, char const *argv[])
 		status = -1;
 	}
 	// std::this_thread::sleep_for(std::chrono::seconds(2));
-	// driver.queryMovementStatus();
-	// driver.queryPulseWidth(channel);	
+	driver.queryMovementStatus();
+	driver.queryPulseWidth(channel);	
 
 	// driver.stopAllServos();
 	return status;

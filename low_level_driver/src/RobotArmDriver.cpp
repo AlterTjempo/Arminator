@@ -79,11 +79,12 @@ void RobotArmDriver::queryMovementStatus() {
 
     // Print out the response from the serial port
     std::string response;
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));  
     error = serial_driver_.readLine(response);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error reading response: " << error.message << std::endl;
     } else {
-        std::cout << "Movement status response: " << response << std::endl;
+        std::cout << "Pulse width response: " << response<< std::endl;
     }
 }
 
@@ -95,14 +96,16 @@ void RobotArmDriver::queryPulseWidth(uint8_t channel) {
     }
 
     //Print out the response from the serial port
-    std::string response;
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));  
+    std::vector<uint8_t> response;
     error = serial_driver_.readLine(response);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error reading response: " << error.message << std::endl;
     } else {
-        std::cout << "Pulse width response: " << response<< std::endl;
-        //^ This is currently useless because it returns �
+        std::cout << "Movement status response: ";
+        for (const auto &byte : response) {
+            std::cout << static_cast<int>(byte) << " ";
+        }
+        std::cout << std::endl;
     }
 }
 
