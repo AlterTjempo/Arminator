@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(robot_arm_driver)
 
 # Default to C99
@@ -16,6 +16,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
+find_package(ament_cmake REQUIRED)
 find_package(Boost REQUIRED)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -32,34 +33,29 @@ target_include_directories(robot_arm_driver
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # add boost and threads libraries to the robot arm driver
 target_link_libraries(robot_arm_driver PUBLIC Boost::boost)
 
 # installation rules
-include(GNUInstallDirs)
-
-# This install rule specifies where to place the built robot_arm_driver library and executable 
-# files during installation, and exports its targets for use by other CMake projects.
 install(TARGETS robot_arm_driver
     EXPORT robot_arm_driver_Targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
 # Install the public header files to the appropriate include directory
 install(DIRECTORY include/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    DESTINATION include
 )
 
-# Export the targets to a CMake configuration file for use by other projects
-install(EXPORT robot_arm_driver_Targets
-    FILE robot_arm_driver-config.cmake
-    NAMESPACE robot_arm_driver::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/robot_arm_driver
-)
+# Export the targets for use by other ament packages
+ament_export_targets(robot_arm_driver_Targets HAS_LIBRARY_TARGET)
+ament_export_dependencies(Boost)
 
 # add an example executable that uses the robot arm driver library
 add_executable(serialtest
@@ -73,3 +69,11 @@ target_include_directories(serialtest PRIVATE
 
 # link the example executable against the robot arm driver library
 target_link_libraries(serialtest robot_arm_driver)
+
+# install the example executable
+install(TARGETS serialtest
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# ament package macro
+ament_package()

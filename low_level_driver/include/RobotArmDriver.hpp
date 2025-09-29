@@ -1,8 +1,12 @@
 #pragma once
 
-#include "SerialDriver.hpp"
 #include <string>
 #include <optional>
+#include <vector>
+#include <memory>
+
+// Forward declaration
+class SerialDriver;
 
 class RobotArmDriver
 {
@@ -45,5 +49,5 @@ private:
     std::string toSerialString(const MultiServoCommand &commands);
     RobotArmDriverError validateCommand(const ServoCommand &command);
     RobotArmDriverError validateCommands(const MultiServoCommand &commands);
-    SerialDriver serial_driver_;
+    std::unique_ptr<SerialDriver> serial_driver_;
 };

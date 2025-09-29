@@ -1,9 +1,10 @@
 #include <iostream>
 #include "RobotArmDriver.hpp"
+#include "SerialDriver.hpp"
 #include <thread>
 
 RobotArmDriver::RobotArmDriver(const std::string &port, uint32_t baudrate)
-    : serial_driver_(port, baudrate) {
+    : serial_driver_(std::make_unique<SerialDriver>(port, baudrate)) {
 }
 
 RobotArmDriver::~RobotArmDriver() {
@@ -17,7 +18,7 @@ RobotArmDriver::RobotArmDriverError RobotArmDriver::sendSingleServoCommand(const
         return error;
     }
     std::string commandStr = toSerialString(command);
-    auto error = serial_driver_.writeLine(commandStr);
+    auto error = serial_driver_->writeLine(commandStr);
 
     if (error.code != SerialDriver::SerialError::NONE)
     {
@@ -37,7 +38,7 @@ RobotArmDriver::RobotArmDriverError RobotArmDriver::sendMultiServoCommand(const 
     }
     
     std::string commandStr = toSerialString(commands);
-    auto error = serial_driver_.writeLine(commandStr);
+    auto error = serial_driver_->writeLine(commandStr);
 
     if (error.code != SerialDriver::SerialError::NONE)
     {
@@ -54,7 +55,7 @@ RobotArmDriver::RobotArmDriverError RobotArmDriver::sendMultiServoCommand(const 
 //###########
 void RobotArmDriver::stopServo(uint8_t channel)
 {
-    serial_driver_.writeLine("STOP" + std::to_string(channel));
+    serial_driver_->writeLine("STOP" + std::to_string(channel));
 }
 
 
@@ -68,7 +69,7 @@ void RobotArmDriver::stopAllServos()
 
 void RobotArmDriver::queryMovementStatus() {
     std::string commandStr = "Q";
-    auto error = serial_driver_.writeLine(commandStr);
+    auto error = serial_driver_->writeLine(commandStr);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error querying movement status: " << error.message << std::endl;
         return;
@@ -76,7 +77,7 @@ void RobotArmDriver::queryMovementStatus() {
 
     // Print out the response from the serial port
     std::string response;
-    error = serial_driver_.readLine(response);
+    error = serial_driver_->readLine(response);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error reading response: " << error.message << std::endl;
     } else {
@@ -86,14 +87,14 @@ void RobotArmDriver::queryMovementStatus() {
 
 void RobotArmDriver::queryPulseWidth(uint8_t channel) {
     std::string commandStr = "QP" + std::to_string(channel);
-    auto error = serial_driver_.writeLine(commandStr);
+    auto error = serial_driver_->writeLine(commandStr);
     if (error.code != SerialDriver::SerialError::NONE){
         std::cerr << "Error querying pulse width: " << error.message << std::endl;
     }
 
     //Print out the response from the serial port
     std::vector<uint8_t> response;
-    error = serial_driver_.readLine(response);
+    error = serial_driver_->readLine(response);
     if (error.code != SerialDriver::SerialError::NONE) {
         std::cerr << "Error reading response: " << error.message << std::endl;
     } else {

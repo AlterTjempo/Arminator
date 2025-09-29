@@ -18,6 +18,7 @@ CMakeUserPresets.json
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #cmake-build-*
 
-low_level_driver/build/*
-high_level_driver/build/*
+build
+install
+log
 docs/resources/RobotArm.asta.lock
