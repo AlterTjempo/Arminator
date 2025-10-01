@@ -25,14 +25,20 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Estop.srv"
 )
 
+# Get the typesupport target for linking
+rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 # Executable
 add_executable(${PROJECT_NAME}_node src/main.cpp)
 
+# Add dependencies to ensure headers are generated before compilation
+ament_target_dependencies(${PROJECT_NAME}_node
+  rclcpp
+  robot_arm_driver
+)
+
 target_link_libraries(${PROJECT_NAME}_node
-  PRIVATE
-    rclcpp::rclcpp
-    robot_arm_driver::robot_arm_driver
-    ${cpp_typesupport_target}
+  ${cpp_typesupport_target}
 )
 
 
