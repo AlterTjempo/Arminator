@@ -23,7 +23,6 @@ find_package(std_srvs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MoveServo.srv"
   "srv/SetPosition.srv"
-  "srv/Estop.srv"
 )
 
 # Get the typesupport target for linking

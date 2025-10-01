@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.inc": "cpp",
         "cctype": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
@@ -75,7 +76,10 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp",
+        "stdfloat": "cpp"
     },
     "cmake.sourceDirectory": "/home/ubuntu/Arminator/low_level_driver"
 }
