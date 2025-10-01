@@ -1,4 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "arminator_driver/srv/move_servo.hpp"
 #include "arminator_driver/srv/set_position.hpp"
 #include "arminator_driver/srv/estop.hpp"
@@ -31,11 +32,11 @@ void setPosition(const std::shared_ptr<arminator_driver::srv::SetPosition::Reque
     response->status = 0;
 }
 
-void estop(const std::shared_ptr<arminator_driver::srv::Estop::Request> request, std::shared_ptr<arminator_driver::srv::Estop::Response> response){
+void estop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response){
     (void)request; // Suppress unused parameter warning
-    // TODO: Implement emergency stop logic
-    // For now, just return success
-    response->status = 0;
+    driver.stopAllServos();
+    response->success = true;
+    response->message = "Emergency stop activated";
 }
 
 int main(int argc, char const *argv[]) {
@@ -49,8 +50,8 @@ int main(int argc, char const *argv[]) {
     rclcpp::Service<arminator_driver::srv::SetPosition>::SharedPtr set_position_service = 
         node->create_service<arminator_driver::srv::SetPosition>("set_position", &setPosition);
     
-    rclcpp::Service<arminator_driver::srv::Estop>::SharedPtr estop_service = 
-        node->create_service<arminator_driver::srv::Estop>("estop", &estop);
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr estop_service = 
+        node->create_service<std_srvs::srv::Trigger>("estop", &estop);
     
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Arminator driver services ready.");
     rclcpp::spin(node);

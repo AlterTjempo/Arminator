@@ -16,6 +16,7 @@ find_package(robot_arm_driver REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rosidl_default_runtime REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_srvs REQUIRED)
 
 
 # Generate messages and services
@@ -35,6 +36,7 @@ add_executable(${PROJECT_NAME}_node src/main.cpp)
 ament_target_dependencies(${PROJECT_NAME}_node
   rclcpp
   robot_arm_driver
+  std_srvs
 )
 
 target_link_libraries(${PROJECT_NAME}_node
