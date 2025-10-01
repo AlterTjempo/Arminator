@@ -17,7 +17,9 @@
 	"workspaceFolder": "/home/ubuntu/${localWorkspaceFolderBasename}",
 	"remoteEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}",
-		"TZ": "Europe/Amsterdam"
+		"TZ": "Europe/Amsterdam",
+		"PID": "1000",
+		"GID": "1000"
 	},
 	"mounts": [
 		// Uncomment to allow the container to access the X server on the host e.g. to run Rviz and other GUI tools
