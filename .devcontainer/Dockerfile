@@ -1,6 +1,6 @@
 FROM osrf/ros:jazzy-desktop-full-noble
 
-
+RUN groupmod -g 18 dialout || groupadd -g 18 dialout
 RUN usermod -aG dialout,tty,video ubuntu
 RUN usermod -aG irc ubuntu
 
