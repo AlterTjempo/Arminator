@@ -8,6 +8,7 @@
 #include "RobotArmDriver.hpp"
 #include "arminator_driver/positions.h"
 
+using namespace std::placeholders; //in service callbacks
 
 RobotArmDriver driver("/dev/ttyUSB0", 115200);
 
@@ -63,7 +64,6 @@ void moveToPredefinedPosition(
 }
 
 
-
 int main(int argc, char const *argv[]) {
     rclcpp::init(argc, argv);
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("arminator_driver_node");
@@ -78,19 +78,8 @@ int main(int argc, char const *argv[]) {
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr estop_service = 
         node->create_service<std_srvs::srv::Trigger>("estop", &estop);
 
-    // rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr park_service = 
-    //     node->create_service<std_srvs::srv::Trigger>("park", &park);
-
-    // rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr straight_up_service = 
-    //     node->create_service<std_srvs::srv::Trigger>("straight_up", &straight_up);
-
-    // rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_service = 
-    //     node->create_service<std_srvs::srv::Trigger>("ready", &ready);
-
-    using namespace std::placeholders;
-    
     auto park_service = node->create_service<std_srvs::srv::Trigger>("park",
-    std::bind(moveToPredefinedPosition, _1, _2, Position::Park));
+        std::bind(moveToPredefinedPosition, _1, _2, Position::Park));
 
     auto straight_up_service = node->create_service<std_srvs::srv::Trigger>("straight_up",
         std::bind(moveToPredefinedPosition, _1, _2, Position::StraightUp));
