@@ -1,9 +1,9 @@
 # TODO lijst - Musts
 
 ## High level driver
-- [ ] Aansturing in de vorm van graden.
+- [x] Aansturing in de vorm van graden.
 - [ ] Config file voor offsets
-- [ ] High level driver hoek constraints (Arm kan niet verder dan geconfigureerde constraint)
+- [x] High level driver hoek constraints (Arm kan niet verder dan geconfigureerde constraint)
 - [ ] Demo script
 - [ ] informatie over toestand via rosout op INFO niveau
 - [ ] informatie over events via rosout op DEBUG niveau
