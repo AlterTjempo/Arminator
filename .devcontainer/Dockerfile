@@ -1,4 +1,4 @@
-FROM osrf/ros:jazzy-desktop-full-noble
+FROM osrf/ros@sha256:93e93e09708fa1b9c0effec0e56caffad258ddbe1e89b8e4a19fe9357242665f
 
 RUN groupmod -g 18 dialout || groupadd -g 18 dialout
 RUN usermod -aG dialout,tty,video ubuntu

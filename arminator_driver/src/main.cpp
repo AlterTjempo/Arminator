@@ -12,7 +12,7 @@
 
 using namespace std::placeholders; //in service callbacks
 
-RobotArmDriver driver("/dev/ttyUSB1", 115200);
+RobotArmDriver driver("/dev/ttyUSB0", 115200);
 
 // Servo calibration offsets - these adjust the center position (1500μs) for each servo
 const std::map<int, int> SERVO_OFFSETS = {
