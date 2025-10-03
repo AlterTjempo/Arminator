@@ -7,6 +7,7 @@
 - [ ] Demo script
 - [ ] informatie over toestand via rosout op INFO niveau
 - [ ] informatie over events via rosout op DEBUG niveau
+- [ ] Nuttige excepties implementeren
   
 ## UML / Documentatie
 - [ ] Use cases, inclusief decompositie in subsystemen
