@@ -42,6 +42,11 @@ target_link_libraries(${PROJECT_NAME}_node
   ${cpp_typesupport_target}
 )
 
+target_include_directories(${PROJECT_NAME}_node PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 
 # Install
 install(TARGETS ${PROJECT_NAME}_node

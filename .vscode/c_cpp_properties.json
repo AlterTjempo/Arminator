@@ -6,7 +6,8 @@
                 "${workspaceFolder}/install/**",
                 "${workspaceFolder}/install/arminator_driver/include/**",
                 "${workspaceFolder}/install/robot_arm_driver/include/**",
-                "/opt/ros/jazzy/include/**"
+                "/opt/ros/jazzy/include/**",
+                "${workspaceFolder}/arminator_driver/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

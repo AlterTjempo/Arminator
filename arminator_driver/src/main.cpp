@@ -8,6 +8,9 @@
 #include <map>
 #include <algorithm>
 #include "RobotArmDriver.hpp"
+#include "arminator_driver/positions.h"
+
+using namespace std::placeholders; //in service callbacks
 
 RobotArmDriver driver("/dev/ttyUSB1", 115200);
 
@@ -92,69 +95,28 @@ void estop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::
     (void)request; // Suppress unused parameter warning
     driver.stopAllServos();
     response->success = true;
-    response->message = "Emergency stop activated";
+    response->message = "Emergency stop!";
 }
 
-void park(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response){
-    (void)request; // Suppress unused parameter warning
-    // Park mode values from documentation (channel 0 is defect, so skipped)
-    RobotArmDriver::MultiServoCommand parkCommand = {
-        {1, 1900, 200, std::nullopt}, // Channel 1: 1900μs
-        {2, 1950, 200, std::nullopt}, // Channel 2: 1950μs
-        {3, 650, 200, std::nullopt},  // Channel 3: 650μs
-        {4, 1500, 200, std::nullopt}, // Channel 4: 1500μs (maar should this be 1450 for horizontal?)
-        {5, 1900, 200, std::nullopt}, // Channel 5: 1900μs (half open - belangrijk!)
-    };
-    RobotArmDriver::RobotArmDriverError error = driver.sendMultiServoCommand(parkCommand);
-    if(error.code == RobotArmDriver::RobotArmDriverError::Code::NONE){
-        response->success = true;
-        response->message = "Robot parked successfully";
-    } else {
+void moveToPredefinedPosition(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> request [[maybe_unused]],
+    std::shared_ptr<std_srvs::srv::Trigger::Response> response, Position pos ){
+        
+    auto it = positions.find(pos);
+    if (it == positions.end()) {
         response->success = false;
-        response->message = "Failed to park robot";
+        response->message = "Unknown position";
+        return;
     }
-}
 
-void straight_up(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response){
-    (void)request; // Suppress unused parameter warning
-    // Straight up position using calibrated values from offset table
-    RobotArmDriver::MultiServoCommand straightUpCommand = {
-        {1, 1550, 200, std::nullopt}, // Channel 1: Recht omhoog (1500 + 50 offset)
-        {2, 650, 200, std::nullopt},  // Channel 2: Recht omhoog (500 + 150 offset)
-        {3, 1450, 200, std::nullopt}, // Channel 3: Recht (1500 - 50 offset)
-        {4, 1450, 200, std::nullopt}, // Channel 4: Horizontaal (1500 - 50 offset)
-        {5, 2500, 200, std::nullopt}, // Channel 5: Volledig dicht (2500 + 0 offset)
-    };
+    RobotArmDriver::RobotArmDriverError error = driver.sendMultiServoCommand(it->second);
 
-    RobotArmDriver::RobotArmDriverError error = driver.sendMultiServoCommand(straightUpCommand);
-    if(error.code == RobotArmDriver::RobotArmDriverError::Code::NONE){
+    if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
         response->success = true;
-        response->message = "Robot moved to straight up position successfully";
+        response->message = "Success";
     } else {
         response->success = false;
-        response->message = "Failed to move robot to straight up position";
-    }
-}
-
-
-void ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response){
-    (void)request; // Suppress unused parameter warning
-    // Ready mode values from documentation (channel 0 is defect, so skipped)
-    RobotArmDriver::MultiServoCommand readyCommand = {
-        {1, 1850, 400, std::nullopt}, // Channel 1: 1850μs
-        {2, 1650, 400, std::nullopt}, // Channel 2: 1650μs
-        {3, 1300, 400, std::nullopt}, // Channel 3: 1300μs
-        {4, 1500, 400, std::nullopt}, // Channel 4: 1500μs
-        {5, 1000, 400, std::nullopt}, // Channel 5: 1000μs (helemaal open)
-    };
-
-    RobotArmDriver::RobotArmDriverError error = driver.sendMultiServoCommand(readyCommand);
-    if(error.code == RobotArmDriver::RobotArmDriverError::Code::NONE){
-        response->success = true;
-        response->message = "Robot moved to ready position successfully";
-    } else {
-        response->success = false;
-        response->message = "Failed to move robot to ready position";
+        response->message = "Failed";
     }
 }
 
@@ -173,14 +135,14 @@ int main(int argc, char const *argv[]) {
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr estop_service = 
         node->create_service<std_srvs::srv::Trigger>("estop", &estop);
 
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr park_service = 
-        node->create_service<std_srvs::srv::Trigger>("park", &park);
+    auto park_service = node->create_service<std_srvs::srv::Trigger>("park",
+        std::bind(moveToPredefinedPosition, _1, _2, Position::Park));
 
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr straight_up_service = 
-        node->create_service<std_srvs::srv::Trigger>("straight_up", &straight_up);
+    auto straight_up_service = node->create_service<std_srvs::srv::Trigger>("straight_up",
+        std::bind(moveToPredefinedPosition, _1, _2, Position::StraightUp));
 
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_service = 
-        node->create_service<std_srvs::srv::Trigger>("ready", &ready);
+    auto ready_service = node->create_service<std_srvs::srv::Trigger>("ready",
+        std::bind(moveToPredefinedPosition, _1, _2, Position::Ready));
     
     
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Arminator driver services ready.");
