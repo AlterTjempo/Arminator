@@ -53,8 +53,6 @@ void moveServo(const std::shared_ptr<arminator_driver::srv::MoveServo::Request> 
     int calibrated_center = 1500 + offset;
     
     // Convert angle in degrees to pulse width in microseconds
-    // Map -90 to +90 degrees to the available range for this specific servo
-    int available_range = max_limit - min_limit;
     int base_pulse_width = static_cast<int>((request->angle * 2000 / 180.0) + calibrated_center);
     
     // Ensure the pulse width stays within the physical limits for this servo
