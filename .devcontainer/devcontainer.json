@@ -34,10 +34,10 @@
 			"target": "/home/ubuntu/.bash_history",
 			"type": "bind"
 		},
-		// add dri3
+		// add access to /dev for all devices
 		{
-			"source": "/dev/dri",
-			"target": "/dev/dri",
+			"source": "/dev",
+			"target": "/dev",
 			"type": "bind"
 		}
 	],
