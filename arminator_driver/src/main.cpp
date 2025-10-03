@@ -75,7 +75,7 @@ void moveServo(const std::shared_ptr<arminator_driver::srv::MoveServo::Request> 
     if(error.code == RobotArmDriver::RobotArmDriverError::Code::NONE){
         response->status = 0; // success
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Moved servo %d to angle %d (pulse width: %dμs) over %dms", 
-                    request->servo, request->angle, command.pulseWidth, command.time);
+                    request->servo, request->angle, command.pulseWidth, command.time.value_or(0));
     } else {
         response->status = 1; // error
     }
