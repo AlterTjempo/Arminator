@@ -31,8 +31,8 @@ const std::map<Position, RobotArmDriver::MultiServoCommand> positions = {
         {5, 1900, DEFAULT_SPEED, std::nullopt}
     }},
     {Position::StraightUp, {
-        {1, 1550, DEFAULT_SPEED, std::nullopt},
-        {2, 650, DEFAULT_SPEED, std::nullopt},
+        {1, 1500, DEFAULT_SPEED, std::nullopt},
+        {2, 600, DEFAULT_SPEED, std::nullopt},
         {3, 1450, DEFAULT_SPEED, std::nullopt},
         {4, 1450, DEFAULT_SPEED, std::nullopt},
         {5, 2500, DEFAULT_SPEED, std::nullopt}
