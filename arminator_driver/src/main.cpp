@@ -2,35 +2,20 @@
 #include "std_srvs/srv/trigger.hpp"
 #include "arminator_driver/srv/move_servo.hpp"
 #include "arminator_driver/srv/set_position.hpp"
-
+#include "arminator_driver/servoConfig.hpp"
+#include "arminator_driver/positions.h"
 
 #include <iostream>
 #include <map>
 #include <algorithm>
 #include "RobotArmDriver.hpp"
-#include "arminator_driver/positions.h"
+
 
 using namespace std::placeholders; //in service callbacks
 
 RobotArmDriver driver("/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AH06DKH3-if00-port0", 115200);
+// RobotArmDriver driver("/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AH06DKH3-if00-port0", 115200, true); //for testing without hardware
 
-// Servo calibration offsets - these adjust the center position (1500μs) for each servo
-const std::map<int, int> SERVO_OFFSETS = {
-    {1, 50},   // Channel 1: +50 offset (center at 1550)
-    {2, -50},  // Channel 2: +150 offset (center at 650)
-    {3, -50},  // Channel 3: -50 offset (center at 1450)
-    {4, -50},  // Channel 4: -50 offset (center at 1450)
-    {5, 400}   // Channel 5: +400 offset (center at 1900)
-};
-
-// Physical limits for each servo channel based on mechanical constraints
-const std::map<int, std::pair<int, int>> SERVO_LIMITS = {
-    {1, {850, 1900}},   // Channel 1 (Shoulder): 850μs (naar voren) to 1900μs (max uitslag)
-    {2, {650, 1450}},   // Channel 2 (Elbow): 650μs (recht omhoog) to 1450μs (90 graden)
-    {3, {550, 2450}},   // Channel 3 (Wrist): 550μs (omlaag) to 2450μs (omhoog)
-    {4, {550, 2450}},   // Channel 4 (Wrist Rotate): 550μs (verticaal links) to 2450μs (verticaal rechts)
-    {5, {1000, 2500}}   // Channel 5 (Gripper): 1000μs (volledig open) to 2500μs (volledig dicht)
-};
 
 void moveServo(const std::shared_ptr<arminator_driver::srv::MoveServo::Request> request, std::shared_ptr<arminator_driver::srv::MoveServo::Response> response){
     RobotArmDriver::ServoCommand command;
@@ -84,15 +69,13 @@ void moveServo(const std::shared_ptr<arminator_driver::srv::MoveServo::Request> 
     }
 }
 
-void setPosition(const std::shared_ptr<arminator_driver::srv::SetPosition::Request> request, std::shared_ptr<arminator_driver::srv::SetPosition::Response> response){
-    (void)request; // Suppress unused parameter warning
+void setPosition(const std::shared_ptr<arminator_driver::srv::SetPosition::Request> request [[maybe_unused]], std::shared_ptr<arminator_driver::srv::SetPosition::Response> response){
     // TODO: Implement position setting logic
     // For now, just return success
     response->status = 0;
 }
 
-void estop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response){
-    (void)request; // Suppress unused parameter warning
+void estop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request [[maybe_unused]], std::shared_ptr<std_srvs::srv::Trigger::Response> response){
     driver.stopAllServos();
     response->success = true;
     response->message = "Emergency stop!";
@@ -122,6 +105,14 @@ void moveToPredefinedPosition(
 
 
 int main(int argc, char const *argv[]) {
+    try{
+        load_servo_config("./arminator_driver/configs/servo_config.ini");
+    }catch (const std::exception& err){
+        std::cerr << "Error loading servo configuration: " << err.what() << std::endl;
+        return 1;
+    }
+
+
     rclcpp::init(argc, argv);
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("arminator_driver_node");
     

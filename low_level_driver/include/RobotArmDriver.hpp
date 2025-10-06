@@ -11,7 +11,7 @@ class SerialDriver;
 class RobotArmDriver
 {
 public:
-    RobotArmDriver(const std::string &port, uint32_t baudrate = 115200);
+    RobotArmDriver(const std::string &port, uint32_t baudrate = 115200, bool test_mode = false);
     ~RobotArmDriver();
     struct ServoCommand
     {

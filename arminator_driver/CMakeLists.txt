@@ -29,7 +29,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 # Executable
-add_executable(${PROJECT_NAME}_node src/main.cpp)
+add_executable(${PROJECT_NAME}_node src/main.cpp src/servoConfig.cpp)
+# I hate cmake.
 
 # Add dependencies to ensure headers are generated before compilation
 ament_target_dependencies(${PROJECT_NAME}_node

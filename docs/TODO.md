@@ -2,11 +2,11 @@
 
 ## High level driver
 - [x] Aansturing in de vorm van graden.
-- [ ] Config file voor offsets
-- [ ] Config reader klasse (ConfigReader)
+- [?] Config file voor offsets *nog testen*
+- [?] Config reader klasse (ConfigReader) *nog testen*
 - [ ] High level driver in klasse (ArminatorNode)
 - [x] High level driver hoek constraints (Arm kan niet verder dan geconfigureerde constraint)
-- [ ] Demo script
+- [ ] Demo script *begin gemaakt*
 - [ ] informatie over toestand via rosout op INFO niveau
 - [ ] informatie over events via rosout op DEBUG niveau
 - [ ] Nuttige excepties implementeren

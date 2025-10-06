@@ -3,8 +3,16 @@
 #include "SerialDriver.hpp"
 #include <thread>
 
-RobotArmDriver::RobotArmDriver(const std::string &port, uint32_t baudrate)
-    : serial_driver_(std::make_unique<SerialDriver>(port, baudrate)) {
+RobotArmDriver::RobotArmDriver(const std::string &port, uint32_t baudrate, bool test_mode) {
+    //We can not use the initializer list here because of the test_mode option
+     if (!test_mode) {
+            serial_driver_ = std::make_unique<SerialDriver>(port, baudrate);
+    } else {
+        //fake driver for testing without hardware
+        serial_driver_ = nullptr;
+        std::cout << "#! Test mode enabled: No hardware connection established." << '\n';
+        std::cout << "#! Running commands will throw segfaults!" << std::endl;
+    }
 }
 
 RobotArmDriver::~RobotArmDriver() {
@@ -50,11 +58,8 @@ RobotArmDriver::RobotArmDriverError RobotArmDriver::sendMultiServoCommand(const 
 }
 
 
-//###########
 // Stopping:  
-//###########
-void RobotArmDriver::stopServo(uint8_t channel)
-{
+void RobotArmDriver::stopServo(uint8_t channel) {
     serial_driver_->writeLine("STOP" + std::to_string(channel));
 }
 
