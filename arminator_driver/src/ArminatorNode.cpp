@@ -13,10 +13,6 @@ ArminatorNode::ArminatorNode(const ServoConfiguration& servo_config, bool test_m
         "move_servo", 
         std::bind(&ArminatorNode::moveServo, this, _1, _2));
     
-    set_position_service_ = this->create_service<arminator_driver::srv::SetPosition>(
-        "set_position", 
-        std::bind(&ArminatorNode::setPosition, this, _1, _2));
-    
     estop_service_ = this->create_service<std_srvs::srv::Trigger>(
         "estop", 
         std::bind(&ArminatorNode::estop, this, _1, _2));
@@ -82,13 +78,6 @@ void ArminatorNode::moveServo(const std::shared_ptr<arminator_driver::srv::MoveS
     } else {
         response->status = 1; // error
     }
-}
-
-void ArminatorNode::setPosition(const std::shared_ptr<arminator_driver::srv::SetPosition::Request> request [[maybe_unused]], 
-                                std::shared_ptr<arminator_driver::srv::SetPosition::Response> response) {
-    // TODO: Implement position setting logic
-    // For now, just return success
-    response->status = 0;
 }
 
 void ArminatorNode::estop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request [[maybe_unused]], 
