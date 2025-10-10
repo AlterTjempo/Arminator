@@ -12,6 +12,8 @@
 - [ ] Nuttige excepties implementeren
 - [ ] Queuing van commands
 - [ ] Alle vrijheidsgrades ontsluiten.
+- [ ] Estop Lock & Safety Override.
+- [ ] Park pose on startup
   
 ## UML / Documentatie
 - [ ] Use cases, inclusief decompositie in subsystemen

@@ -30,6 +30,16 @@ ArminatorNode::ArminatorNode(const ServoConfiguration& servo_config, bool test_m
         std::bind(&ArminatorNode::moveToPredefinedPosition, this, _1, _2, Position::Ready));
     
     RCLCPP_INFO(this->get_logger(), std::string(servo_config.arm_name + " is ready.").c_str() );
+
+    //Dit lijkt niet te werken? 
+    try{
+        auto response = std::make_shared<std_srvs::srv::Trigger::Response>();
+        moveToPredefinedPosition(nullptr, response, Position::Park);
+        RCLCPP_INFO(this->get_logger(), "Setup: Moved to park position");
+    }
+    catch (const std::exception& e) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to move to park position on startup: %s", e.what());
+    }
 }
 
 ArminatorNode::~ArminatorNode() {}
