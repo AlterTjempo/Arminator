@@ -7,13 +7,13 @@
 - [ ] High level driver in klasse (ArminatorNode)
 - [x] High level driver hoek constraints (Arm kan niet verder dan geconfigureerde constraint)
 - [ ] Demo script *begin gemaakt*
-- [ ] informatie over toestand via rosout op INFO niveau
+- [X] informatie over toestand via rosout op INFO niveau
 - [ ] informatie over events via rosout op DEBUG niveau
-- [ ] Nuttige excepties implementeren
-- [ ] Queuing van commands
+- [X] Nuttige excepties implementeren
+- [X] Queuing van commands
 - [ ] Alle vrijheidsgrades ontsluiten.
-- [ ] Estop Lock & Safety Override.
-- [ ] Park pose on startup
+- [X] Estop Lock & Safety Override.
+- [X] Park pose on startup
   
 ## UML / Documentatie
 - [ ] Use cases, inclusief decompositie in subsystemen
