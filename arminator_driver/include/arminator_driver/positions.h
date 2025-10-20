@@ -53,28 +53,28 @@ enum class Position {
  * - Channel number (1-5)
  * - Position value (servo-specific units)
  * - Movement speed (DEFAULT_SPEED or FASTER_SPEED)
- * - Optional time parameter (currently unused - std::nullopt)
+ * - Time parameter (in milliseconds for coordinated movement)
  */
 const std::map<Position, RobotArmDriver::MultiServoCommand> positions = {
     {Position::Park, {
-        {1, 2200, DEFAULT_SPEED, std::nullopt},  ///< Servo 1: Park position
-        {2, 2000, DEFAULT_SPEED, std::nullopt},  ///< Servo 2: Park position
-        {3, 800, DEFAULT_SPEED, std::nullopt},   ///< Servo 3: Park position
-        {4, 1450, DEFAULT_SPEED, std::nullopt},  ///< Servo 4: Park position
-        {5, 1900, DEFAULT_SPEED, std::nullopt}   ///< Servo 5: Park position
+        {1, 2200, std::nullopt, 3000},  ///< Servo 1: Park position (3 second movement)
+        {2, 2000, std::nullopt, 3000},  ///< Servo 2: Park position (3 second movement)
+        {3, 800, std::nullopt, 3000},   ///< Servo 3: Park position (3 second movement)
+        {4, 1450, std::nullopt, 3000},  ///< Servo 4: Park position (3 second movement)
+        {5, 1900, std::nullopt, 3000}   ///< Servo 5: Park position (3 second movement)
     }},
     {Position::StraightUp, {
-        {1, 1500, DEFAULT_SPEED, std::nullopt},  ///< Servo 1: Straight up position
-        {2, 600, DEFAULT_SPEED, std::nullopt},   ///< Servo 2: Straight up position
-        {3, 1450, DEFAULT_SPEED, std::nullopt},  ///< Servo 3: Straight up position
-        {4, 1450, DEFAULT_SPEED, std::nullopt},  ///< Servo 4: Straight up position
-        {5, 2500, DEFAULT_SPEED, std::nullopt}   ///< Servo 5: Straight up position
+        {1, 1500, std::nullopt, 2500},  ///< Servo 1: Straight up position (2.5 second movement)
+        {2, 600, std::nullopt, 2500},   ///< Servo 2: Straight up position (2.5 second movement)
+        {3, 1450, std::nullopt, 2500},  ///< Servo 3: Straight up position (2.5 second movement)
+        {4, 1450, std::nullopt, 2500},  ///< Servo 4: Straight up position (2.5 second movement)
+        {5, 2500, std::nullopt, 2500}   ///< Servo 5: Straight up position (2.5 second movement)
     }},
     {Position::Ready, {
-        {1, 1850, FASTER_SPEED, std::nullopt},   ///< Servo 1: Ready position
-        {2, 1650, FASTER_SPEED, std::nullopt},   ///< Servo 2: Ready position
-        {3, 1300, FASTER_SPEED, std::nullopt},   ///< Servo 3: Ready position
-        {4, 1500, FASTER_SPEED, std::nullopt},   ///< Servo 4: Ready position
-        {5, 1000, FASTER_SPEED, std::nullopt}    ///< Servo 5: Ready position
+        {1, 1850, std::nullopt, 2000},   ///< Servo 1: Ready position (2 second movement)
+        {2, 1650, std::nullopt, 2000},   ///< Servo 2: Ready position (2 second movement)
+        {3, 1300, std::nullopt, 2000},   ///< Servo 3: Ready position (2 second movement)
+        {4, 1500, std::nullopt, 2000},   ///< Servo 4: Ready position (2 second movement)
+        {5, 1000, std::nullopt, 2000}    ///< Servo 5: Ready position (2 second movement)
     }}
 };

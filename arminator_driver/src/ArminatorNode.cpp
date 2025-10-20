@@ -152,16 +152,15 @@ void ArminatorNode::getQueueStatus(const std::shared_ptr<std_srvs::srv::Trigger:
     std::lock_guard<std::mutex> lock(queue_mutex_);
     
     size_t queue_size = command_queue_.size();
-    bool estop_active = emergency_stop_active_;
-    
-    std::string status_message = "Queue size: " + std::to_string(queue_size) + 
-                                ", Emergency stop: " + (estop_active ? "ACTIVE" : "INACTIVE") +
-                                ", Queue processing: " + (queue_running_ ? "RUNNING" : "STOPPED");
+    std::string emergency_status = emergency_stop_active_ ? "ACTIVE" : "INACTIVE";
+    std::string queue_status = queue_running_ ? "RUNNING" : "STOPPED";
     
     response->success = true;
-    response->message = status_message;
+    response->message = "Queue size: " + std::to_string(queue_size) + 
+                       ", Emergency stop: " + emergency_status + 
+                       ", Queue processing: " + queue_status;
     
-    RCLCPP_INFO(this->get_logger(), "%s", status_message.c_str());
+    RCLCPP_DEBUG(this->get_logger(), "Queue status requested: %s", response->message.c_str());
 }
 
 void ArminatorNode::moveToPredefinedPosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request [[maybe_unused]],
@@ -212,8 +211,8 @@ void ArminatorNode::queueSingleServoCommand(const RobotArmDriver::ServoCommand& 
     
     command_queue_.push(timed_cmd);
     
-    RCLCPP_DEBUG(this->get_logger(), "Single servo command queued (execution time: %ld ms)", 
-                 timed_cmd.execution_time.count());
+    RCLCPP_INFO(this->get_logger(), "Single servo command queued (servo %d, execution time: %ld ms, queue size: %zu)", 
+                cmd_info.command.channel, timed_cmd.execution_time.count(), command_queue_.size());
 }
 
 void ArminatorNode::queueMultiServoCommand(const RobotArmDriver::MultiServoCommand& commands,
@@ -230,8 +229,8 @@ void ArminatorNode::queueMultiServoCommand(const RobotArmDriver::MultiServoComma
     
     command_queue_.push(timed_cmd);
     
-    RCLCPP_DEBUG(this->get_logger(), "Multi servo command queued (execution time: %ld ms)", 
-                 timed_cmd.execution_time.count());
+    RCLCPP_INFO(this->get_logger(), "Multi servo command queued (%zu servos, execution time: %ld ms, queue size: %zu)", 
+                cmd_info.commands.size(), timed_cmd.execution_time.count(), command_queue_.size());
 }
 
 void ArminatorNode::clearCommandQueue() {
@@ -263,13 +262,16 @@ void ArminatorNode::processCommandQueue() {
         
         if (has_command && !emergency_stop_active_) {
             // Execute the command
+            RCLCPP_INFO(this->get_logger(), "Executing command from queue (execution time: %ld ms)", 
+                       current_command.execution_time.count());
             bool success = executeCommand(current_command);
             
             // If the command has a timing component, wait for it to complete
             if (current_command.execution_time.count() > 0) {
-                RCLCPP_DEBUG(this->get_logger(), "Waiting %ld ms for command to complete", 
+                RCLCPP_INFO(this->get_logger(), "Waiting %ld ms for command to complete", 
                             current_command.execution_time.count());
                 std::this_thread::sleep_for(current_command.execution_time);
+                RCLCPP_INFO(this->get_logger(), "Command completed, processing next command");
             }
             
             // Call the callback if it exists
@@ -294,9 +296,10 @@ bool ArminatorNode::executeCommand(const TimedCommand& timed_command) {
         
         if constexpr (std::is_same_v<T, SingleServoCommandInfo>) {
             // Execute single servo command
+            RCLCPP_INFO(this->get_logger(), "Executing single servo command: servo %d", cmd.command.channel);
             RobotArmDriver::RobotArmDriverError error = driver_.sendSingleServoCommand(cmd.command);
             if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
-                RCLCPP_DEBUG(this->get_logger(), "Single servo command executed successfully");
+                RCLCPP_INFO(this->get_logger(), "Single servo command executed successfully");
                 return true;
             } else {
                 RCLCPP_ERROR(this->get_logger(), "Failed to execute single servo command: %s", 
@@ -305,9 +308,10 @@ bool ArminatorNode::executeCommand(const TimedCommand& timed_command) {
             }
         } else if constexpr (std::is_same_v<T, MultiServoCommandInfo>) {
             // Execute multi servo command
+            RCLCPP_INFO(this->get_logger(), "Executing multi servo command (%zu servos)", cmd.commands.size());
             RobotArmDriver::RobotArmDriverError error = driver_.sendMultiServoCommand(cmd.commands);
             if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
-                RCLCPP_DEBUG(this->get_logger(), "Multi servo command executed successfully");
+                RCLCPP_INFO(this->get_logger(), "Multi servo command executed successfully");
                 return true;
             } else {
                 RCLCPP_ERROR(this->get_logger(), "Failed to execute multi servo command: %s", 

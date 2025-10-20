@@ -2,6 +2,7 @@
 """
 Demo script to test the command queueing functionality of the Arminator robot arm.
 This script demonstrates how multiple commands are queued and executed sequentially.
+Uses valid angles based on the servo configuration limits.
 """
 
 import rclpy
@@ -21,6 +22,16 @@ class ArminatorQueueDemo(Node):
         self.queue_status_client = self.create_client(Trigger, 'queue_status')
         self.park_client = self.create_client(Trigger, 'park')
         self.ready_client = self.create_client(Trigger, 'ready')
+        
+        # Valid angle ranges for each servo based on configuration
+        # Calculated from servo limits and offsets
+        self.valid_angles = {
+            1: (-58, 32),    # Base: 850-1900μs with +50 offset
+            2: (-76, -22),   # Shoulder: 650-1450μs with -50 offset  
+            3: (-86, 85),    # Elbow: 550-2450μs with -50 offset
+            4: (-86, 85),    # Wrist: 550-2450μs with -50 offset
+            5: (-45, 90),    # Gripper: 1000-2500μs with +400 offset
+        }
         
         # Wait for services to be available
         self.get_logger().info("Waiting for services...")
@@ -46,6 +57,13 @@ class ArminatorQueueDemo(Node):
     
     def move_servo(self, servo_id, angle, time_ms=0):
         """Move a servo to a specific angle."""
+        # Check if angle is within valid range
+        if servo_id in self.valid_angles:
+            min_angle, max_angle = self.valid_angles[servo_id]
+            if angle < min_angle or angle > max_angle:
+                self.get_logger().warn(f"Angle {angle} for servo {servo_id} is outside valid range [{min_angle}, {max_angle}]. Clamping.")
+                angle = max(min_angle, min(max_angle, angle))
+        
         request = MoveServo.Request()
         request.servo = servo_id
         request.angle = angle
@@ -116,15 +134,15 @@ def main():
     demo = ArminatorQueueDemo()
     
     try:
-        # Demo 1: Queue multiple commands with different timing
+        # Demo 1: Queue multiple commands with different timing using valid angles
         demo.get_logger().info("=== DEMO 1: Queueing multiple timed commands ===")
         demo.get_queue_status()
         
-        # Queue several commands with different execution times
-        demo.move_servo(1, 45, 2000)  # 2 seconds
-        demo.move_servo(2, 90, 1500)  # 1.5 seconds
-        demo.move_servo(3, -30, 3000) # 3 seconds (longest)
-        demo.move_servo(4, 60, 1000)  # 1 second
+        # Queue several commands with different execution times (using valid angles)
+        demo.move_servo(1, 0, 2000)    # Base servo: 0° over 2 seconds
+        demo.move_servo(2, -50, 1500)  # Shoulder: -50° over 1.5 seconds  
+        demo.move_servo(3, 50, 3000)   # Elbow: 50° over 3 seconds (longest)
+        demo.move_servo(5, 20, 1000)   # Gripper: 20° over 1 second
         
         demo.get_queue_status()
         demo.get_logger().info("Commands queued. The queue will process them sequentially...")
@@ -145,8 +163,8 @@ def main():
         # Demo 3: Emergency stop functionality
         demo.get_logger().info("\n=== DEMO 3: Emergency stop functionality ===")
         # Queue some commands
-        demo.move_servo(1, 0, 5000)   # 5 second command
-        demo.move_servo(2, 45, 3000)  # 3 second command
+        demo.move_servo(1, -30, 5000)  # 5 second command
+        demo.move_servo(3, -50, 3000)  # 3 second command
         demo.get_queue_status()
         
         # Trigger emergency stop after a short delay
@@ -157,7 +175,7 @@ def main():
         
         # Try to queue a command while emergency stop is active
         demo.get_logger().info("Trying to queue command while emergency stop is active...")
-        demo.move_servo(1, 90, 1000)
+        demo.move_servo(1, 20, 1000)
         
         # Reset emergency stop
         time.sleep(2)
@@ -167,7 +185,7 @@ def main():
         
         # Queue a command after reset
         demo.get_logger().info("Queueing command after emergency stop reset...")
-        demo.move_servo(1, 45, 2000)
+        demo.move_servo(1, 10, 2000)
         demo.get_queue_status()
         
         # Wait for final command to complete
