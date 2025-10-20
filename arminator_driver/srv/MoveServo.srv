@@ -1,5 +1,6 @@
 int16 servo
 int16 angle
 int16 time 0 # optional, time in ms, 0 means as fast as possible.
+int16 speed 0 # optional, speed in microseconds per second, 0 means not used. Cannot be used with time.
 ---
 int8 status # 0=success, 1=driver error, 2=invalid servo channel, 3=out of bounds

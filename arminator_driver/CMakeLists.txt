@@ -22,7 +22,6 @@ find_package(std_srvs REQUIRED)
 # Generate messages and services
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MoveServo.srv"
-  "srv/SetPosition.srv"
 )
 
 # Get the typesupport target for linking

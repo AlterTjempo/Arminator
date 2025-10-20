@@ -10,7 +10,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "arminator_driver/srv/move_servo.hpp"
-#include "arminator_driver/srv/set_position.hpp"
 #include "arminator_driver/ServoConfiguration.hpp"
 #include "arminator_driver/positions.h"
 #include "RobotArmDriver.hpp"
@@ -131,6 +130,27 @@ private:
      */
     std::chrono::milliseconds calculateMaxExecutionTime(const RobotArmDriver::MultiServoCommand& commands);
     
+    /**
+     * @brief Calculate execution time for a single servo command (supports both time and speed)
+     * @param command The command to analyze
+     * @return Execution time in milliseconds
+     */
+    std::chrono::milliseconds calculateExecutionTime(const RobotArmDriver::ServoCommand& command);
+    
+    /**
+     * @brief Update the stored current pulse width for a channel
+     * @param channel The servo channel
+     * @param pulseWidth The new pulse width
+     */
+    void updateCurrentPulseWidth(uint8_t channel, uint16_t pulseWidth);
+    
+    /**
+     * @brief Get the current pulse width for a channel
+     * @param channel The servo channel
+     * @return Current pulse width (defaults to 1500 if not yet set)
+     */
+    uint16_t getCurrentPulseWidth(uint8_t channel);
+    
     /// @}
 
     /**
@@ -198,6 +218,10 @@ private:
     std::thread queue_thread_;                      ///< Thread for processing the command queue
     std::atomic<bool> queue_running_;               ///< Flag to control queue processing thread
     std::atomic<bool> emergency_stop_active_;      ///< Flag indicating if emergency stop is active
+    
+    // Current state tracking
+    std::map<uint8_t, uint16_t> current_pulse_widths_;  ///< Current pulse width for each channel (channel -> pulsewidth)
+    std::mutex state_mutex_;                            ///< Mutex for thread-safe state access
     /// @}
     
     /**
@@ -206,7 +230,6 @@ private:
      * @{
      */
     rclcpp::Service<arminator_driver::srv::MoveServo>::SharedPtr move_servo_service_;      ///< Single servo movement service
-    rclcpp::Service<arminator_driver::srv::SetPosition>::SharedPtr set_position_service_;  ///< Multi-servo position service
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr estop_service_;                    ///< Emergency stop service
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr reset_estop_service_;              ///< Reset emergency stop service
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr queue_status_service_;             ///< Queue status service
