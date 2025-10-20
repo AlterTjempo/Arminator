@@ -4,6 +4,10 @@ RUN groupmod -g 18 dialout || groupadd -g 18 dialout
 RUN usermod -aG dialout,tty,video ubuntu
 RUN usermod -aG irc ubuntu
 
+RUN apt-get update && apt-get install -y \
+    socat && \
+    rm -rf /var/lib/apt/lists/*
+
 USER ubuntu
 
 # Add sourcing ROS setup.bash to .bashrc
