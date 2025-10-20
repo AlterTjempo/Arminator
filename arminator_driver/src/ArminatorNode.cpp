@@ -290,37 +290,42 @@ void ArminatorNode::processCommandQueue() {
     RCLCPP_INFO(this->get_logger(), "Command queue processing thread stopped");
 }
 
+bool ArminatorNode::executeSingleServoCommand(const SingleServoCommandInfo& cmd_info) {
+    RobotArmDriver::RobotArmDriverError error = driver_.sendSingleServoCommand(cmd_info.command);
+    
+    if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
+        RCLCPP_DEBUG(this->get_logger(), "Single servo command executed successfully");
+        return true;
+    }
+    
+    RCLCPP_ERROR(this->get_logger(), "Failed to execute single servo command: %s", error.message.c_str());
+    return false;
+}
+
+bool ArminatorNode::executeMultiServoCommand(const MultiServoCommandInfo& cmd_info) {
+    RobotArmDriver::RobotArmDriverError error = driver_.sendMultiServoCommand(cmd_info.commands);
+    
+    if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
+        RCLCPP_DEBUG(this->get_logger(), "Multi servo command executed successfully");
+        return true;
+    }
+    
+    RCLCPP_ERROR(this->get_logger(), "Failed to execute multi servo command: %s", error.message.c_str());
+    return false;
+}
+
 bool ArminatorNode::executeCommand(const TimedCommand& timed_command) {
-    return std::visit([this](auto&& cmd) -> bool {
-        using T = std::decay_t<decltype(cmd)>;
-        
-        if constexpr (std::is_same_v<T, SingleServoCommandInfo>) {
-            // Execute single servo command
-            RCLCPP_INFO(this->get_logger(), "Executing single servo command: servo %d", cmd.command.channel);
-            RobotArmDriver::RobotArmDriverError error = driver_.sendSingleServoCommand(cmd.command);
-            if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
-                RCLCPP_INFO(this->get_logger(), "Single servo command executed successfully");
-                return true;
-            } else {
-                RCLCPP_ERROR(this->get_logger(), "Failed to execute single servo command: %s", 
-                            error.message.c_str());
-                return false;
-            }
-        } else if constexpr (std::is_same_v<T, MultiServoCommandInfo>) {
-            // Execute multi servo command
-            RCLCPP_INFO(this->get_logger(), "Executing multi servo command (%zu servos)", cmd.commands.size());
-            RobotArmDriver::RobotArmDriverError error = driver_.sendMultiServoCommand(cmd.commands);
-            if (error.code == RobotArmDriver::RobotArmDriverError::Code::NONE) {
-                RCLCPP_INFO(this->get_logger(), "Multi servo command executed successfully");
-                return true;
-            } else {
-                RCLCPP_ERROR(this->get_logger(), "Failed to execute multi servo command: %s", 
-                            error.message.c_str());
-                return false;
-            }
-        }
-        return false;
-    }, timed_command.command);
+    // Check which type of command we have and execute it
+    if (std::holds_alternative<SingleServoCommandInfo>(timed_command.command)) {
+        const auto& cmd_info = std::get<SingleServoCommandInfo>(timed_command.command);
+        return executeSingleServoCommand(cmd_info);
+    } 
+    else if (std::holds_alternative<MultiServoCommandInfo>(timed_command.command)) {
+        const auto& cmd_info = std::get<MultiServoCommandInfo>(timed_command.command);
+        return executeMultiServoCommand(cmd_info);
+    }
+    
+    return false;
 }
 
 std::chrono::milliseconds ArminatorNode::calculateMaxExecutionTime(const RobotArmDriver::MultiServoCommand& commands) {

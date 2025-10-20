@@ -111,6 +111,20 @@ private:
     bool executeCommand(const TimedCommand& timed_command);
     
     /**
+     * @brief Execute a single servo command
+     * @param cmd_info The single servo command information
+     * @return true if successful, false otherwise
+     */
+    bool executeSingleServoCommand(const SingleServoCommandInfo& cmd_info);
+    
+    /**
+     * @brief Execute a multi-servo command
+     * @param cmd_info The multi-servo command information
+     * @return true if successful, false otherwise
+     */
+    bool executeMultiServoCommand(const MultiServoCommandInfo& cmd_info);
+    
+    /**
      * @brief Calculate the maximum execution time from a list of servo commands
      * @param commands The commands to analyze
      * @return Maximum execution time in milliseconds
