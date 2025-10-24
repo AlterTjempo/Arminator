@@ -113,17 +113,17 @@ void ArminatorNode::moveServo(const std::shared_ptr<arminator_driver::srv::MoveS
     // Convert angle in degrees to pulse width in microseconds
     int base_pulse_width = static_cast<int>((request->angle * 2000 / 180.0) + calibrated_center);
 
-    // Ensure the pulse width stays within the physical limits for this servo
-    if (base_pulse_width < min_limit || base_pulse_width > max_limit)
+    // Clamp the pulse width to stay within the physical limits for this servo
+    int clamped_pulse_width = std::max(min_limit, std::min(max_limit, base_pulse_width));
+    
+    if (base_pulse_width != clamped_pulse_width)
     {
         RCLCPP_WARN(this->get_logger(),
-                    "Requested angle %d for servo %d results in out-of-bounds pulse width %dμs (limits: %d to %d). Command not sent.",
-                    request->angle, request->servo, base_pulse_width, min_limit, max_limit);
-        response->status = 1; // error
-        return;
+                    "Requested angle %d for servo %d results in out-of-bounds pulse width %dμs (limits: %d to %d). Clamping to %dμs.",
+                    request->angle, request->servo, base_pulse_width, min_limit, max_limit, clamped_pulse_width);
     }
 
-    command.pulseWidth = std::max(min_limit, std::min(max_limit, base_pulse_width));
+    command.pulseWidth = clamped_pulse_width;
 
     // Set time or speed parameter
     if (request->time != 0)
