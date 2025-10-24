@@ -70,8 +70,11 @@ ArminatorNode::~ArminatorNode()
     {
         queue_thread_.join();
     }
-    driver_.sendMultiServoCommand(positions.at(Position::Park));
-    RCLCPP_INFO(this->get_logger(), "Moved to park position on shutdown");
+    if (!emergency_stop_active_)
+    {
+        driver_.sendMultiServoCommand(positions.at(Position::Park));
+        RCLCPP_INFO(this->get_logger(), "Moved to park position on shutdown");
+    }
 }
 
 void ArminatorNode::moveServo(const std::shared_ptr<arminator_driver::srv::MoveServo::Request> request,
